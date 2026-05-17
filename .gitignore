@@ -1,0 +1,11 @@
+result
+result-*
+.direnv
+.envrc.local
+*.swp
+*~
+
+hosts/desktop/local.nix
+
+# Optional: ignore hardware-configuration if it contains disk UUIDs you do not want in git
+# hosts/desktop/hardware-configuration.nix

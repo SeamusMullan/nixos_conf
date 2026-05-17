@@ -1,0 +1,44 @@
+# Copy to local.nix (gitignored) for machine-specific overrides:
+#   cp hosts/desktop/local.nix.example hosts/desktop/local.nix
+#
+# Then add to hosts/desktop/default.nix imports:
+#   ./local.nix
+
+{
+  custom.vfioPassthrough.gpuIds = [
+    "10de:XXXX" # GPU — from: lspci -nn | grep -i '2060'
+    "10de:YYYY" # GPU HDMI/DP audio function on the same card
+  ];
+
+  # If production driver does not see RTX 50-series yet:
+  # custom.nvidiaHost.driverPackage = config.boot.kernelPackages.nvidiaPackages.beta;
+  # custom.nvidiaHost.useOpenKernelModules = true;
+
+  # Scarlett at 96 kHz / smaller buffer for tracking:
+  # custom.proAudio.sampleRate = 96000;
+  # custom.proAudio.quantum = 128;
+
+  # Nsight profilers (large):
+  # custom.cudaMl.enableNsight = true;
+
+  # GPU containers without Docker:
+  # custom.cudaMl.enableDocker = false;
+
+  # Unity Hub (unfree):
+  # custom.renderGamedev.enableUnityHub = true;
+
+  # Steinberg VST3 SDK for cross-format plugin builds:
+  # custom.pluginDev.enableVst3Sdk = true;
+
+  # Wine / yabridge off if you only ship LV2+CLAP:
+  # custom.pluginDev.enableWine = false;
+  # custom.pluginDev.enableYabridge = false;
+
+  # Messaging (see modules/desktop/communications.nix)
+  # custom.communications.matrixClient = "fractal";  # or "nheko" / "none"
+  # custom.communications.enableTelegram = false;
+  # custom.communications.enableSlack = false;
+
+  # JDK for Java coursework:
+  # custom.languages.javaVersion = "17";
+}

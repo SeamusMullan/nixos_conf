@@ -1,0 +1,24 @@
+<!--
+  libvirt domain fragment — attach passthrough GPU (RTX 2060) to a Windows guest.
+  Merge into your VM XML (virsh edit) after replacing PCI bus/slot/function from:
+
+    virsh nodedev-list --cap pci
+    virsh nodedev-dumpxml pci_0000_XX_XX_X
+
+  Requirements:
+  - OVMF (UEFI) firmware
+  - CPU mode host-passthrough + vmx/nested off as needed
+  - Hugepages optional but recommended for stutter-free gaming
+  - Install NVIDIA driver inside Windows after passthrough works
+  - For dual-GPU: monitor must be on the 2060 OR use Looking Glass / dummy HDMI plug
+-->
+<hostdev mode='subsystem' type='pci' managed='yes'>
+  <source>
+    <address domain='0x0000' bus='0xXX' slot='0xYY' function='0x0'/>
+  </source>
+</hostdev>
+<hostdev mode='subsystem' type='pci' managed='yes'>
+  <source>
+    <address domain='0x0000' bus='0xXX' slot='0xYY' function='0x1'/>
+  </source>
+</hostdev>
