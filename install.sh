@@ -113,15 +113,41 @@ confirm() {
 }
 
 # ── setup helpers ──────────────────────────────────────────────────────────────
-ensure_experimental_features() {
-  mkdir -p /etc/nix
+flakes_enabled() {
+  if [[ "${NIX_CONFIG:-}" == *nix-command* ]] && [[ "${NIX_CONFIG:-}" == *flakes* ]]; then
+    return 0
+  fi
   if [[ -f /etc/nix/nix.conf ]] && grep -q 'experimental-features.*nix-command' /etc/nix/nix.conf 2>/dev/null; then
     return 0
   fi
-  info "Enabling nix flakes in /etc/nix/nix.conf"
-  cat >>/etc/nix/nix.conf <<'EOF'
-experimental-features = nix-command flakes
+  if nix config show experimental-features 2>/dev/null | grep -q nix-command; then
+    return 0
+  fi
+  return 1
+}
+
+ensure_experimental_features() {
+  local features='experimental-features = nix-command flakes'
+
+  if flakes_enabled; then
+    return 0
+  fi
+
+  mkdir -p /etc/nix 2>/dev/null || true
+  if { [[ ! -f /etc/nix/nix.conf ]] || [[ -w /etc/nix/nix.conf ]]; } 2>/dev/null; then
+    info "Enabling nix flakes in /etc/nix/nix.conf"
+    cat >>/etc/nix/nix.conf <<EOF
+${features}
 EOF
+    return 0
+  fi
+
+  info "Enabling nix flakes via NIX_CONFIG (/etc/nix is read-only on NixOS)"
+  if [[ -n "${NIX_CONFIG:-}" ]]; then
+    export NIX_CONFIG="${NIX_CONFIG}; ${features}"
+  else
+    export NIX_CONFIG="${features}"
+  fi
 }
 
 flake_update() {
