@@ -2,8 +2,9 @@
 #
 # After install, find IDs:
 #   lspci -nn | grep -i nvidia
-# Example line:  ... NVIDIA Corporation GA106 [GeForce RTX 2060] [10de:1f08]
-# Use the 10de:1f08 style IDs for BOTH the GPU and its HDMI/DP audio function.
+# Example line:  ... GeForce RTX 2060 12GB [10de:1f03]
+# Use vendor:device IDs for BOTH the passthrough GPU and its HDMI/DP audio function.
+# Host GPU (e.g. RTX 5070 at 10de:2f04) must NOT be listed here.
 #
 # Also check IOMMU groups:
 #   find /sys/kernel/iommu_groups/ -type l | sort -V
@@ -25,11 +26,11 @@ in
     gpuIds = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [
-        "10de:1f08" # RTX 2060 — REPLACE with lspci -nn output
-        "10de:10f9" # RTX 2060 audio — REPLACE
+        "10de:1f03" # RTX 2060 12GB (TU106) — Arch desktop @ 04:00.0
+        "10de:10f9" # RTX 2060 HDMI/DP audio — Arch desktop @ 04:00.1
       ];
       example = [
-        "10de:1f08"
+        "10de:1f03"
         "10de:10f9"
       ];
       description = "PCI vendor:device IDs to bind to vfio-pci (GPU + audio).";

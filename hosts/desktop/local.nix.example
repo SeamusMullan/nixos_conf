@@ -5,10 +5,12 @@
 #   ./local.nix
 
 {
-  custom.vfioPassthrough.gpuIds = [
-    "10de:XXXX" # GPU — from: lspci -nn | grep -i '2060'
-    "10de:YYYY" # GPU HDMI/DP audio function on the same card
-  ];
+  # Defaults in modules/gpu/vfio-passthrough.nix match this Arch box (2060 @ 04:00.x).
+  # Override here only if you change hardware or passthrough a different card.
+  # custom.vfioPassthrough.gpuIds = [
+  #   "10de:1f03" # RTX 2060 12GB — do not include RTX 5070 (10de:2f04 / 10de:2f80)
+  #   "10de:10f9" # RTX 2060 audio
+  # ];
 
   # If production driver does not see RTX 50-series yet:
   # custom.nvidiaHost.driverPackage = config.boot.kernelPackages.nvidiaPackages.beta;
